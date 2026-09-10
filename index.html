@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSM | Encurtador de Links Oficial</title>
+    <style>
+        :root {
+            --tsm-teal: #0f5b72;
+            --tsm-teal-dark: #0a4152;
+            --tsm-teal-light: #e6f2f5;
+            --tsm-green: #69af37;
+            --tsm-green-dark: #55912b;
+            --tsm-green-light: #eff8ea;
+            --bg-color: #f2f7f8;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #cbe0e5;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+        }
+
+        /* HEADER E LOGO TSM */
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-box {
+            background: var(--card-bg);
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 35px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 20px rgba(15, 91, 114, 0.06);
+            margin-bottom: 15px;
+        }
+
+        .tsm-logo-svg {
+            width: 220px;
+            height: auto;
+        }
+
+        header h1 {
+            font-size: 22px;
+            color: var(--tsm-teal);
+            font-weight: 800;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 18px;
+            color: var(--tsm-teal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* FORMULÁRIO */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--tsm-teal);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #f8fafb;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-dark);
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--tsm-teal);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(15, 91, 114, 0.15);
+        }
+
+        .slug-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: #f8fafb;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .slug-wrapper:focus-within {
+            border-color: var(--tsm-teal);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(15, 91, 114, 0.15);
+        }
+
+        .slug-prefix {
+            padding: 12px 14px;
+            background-color: var(--tsm-teal-light);
+            color: var(--tsm-teal);
+            font-size: 14px;
+            font-weight: 700;
+            border-right: 1.5px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .slug-wrapper input {
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .slug-wrapper input:focus {
+            box-shadow: none;
+        }
+
+        button.btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--tsm-green);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(105, 175, 55, 0.25);
+        }
+
+        button.btn-primary:hover {
+            background-color: var(--tsm-green-dark);
+        }
+
+        /* LISTA DE LINKS */
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-item {
+            background: #f8fafb;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .link-info {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .short-url {
+            color: var(--tsm-teal);
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            word-break: break-all;
+        }
+
+        .short-url:hover {
+            text-decoration: underline;
+            color: var(--tsm-teal-dark);
+        }
+
+        .original-url {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        .link-stats {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-clicks {
+            background-color: var(--tsm-green-light);
+            color: var(--tsm-green-dark);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(105, 175, 55, 0.3);
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--tsm-teal);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--tsm-teal-light);
+            border-color: var(--tsm-teal);
+        }
+
+        .btn-test {
+            background: var(--tsm-teal);
+            color: #ffffff;
+            border-color: var(--tsm-teal);
+        }
+
+        .btn-test:hover {
+            background: var(--tsm-teal-dark);
+            color: #ffffff;
+        }
+
+        .btn-delete {
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: #fef2f2;
+            border-color: var(--danger);
+        }
+
+        /* MODAL QR CODE */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 91, 114, 0.4);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .modal-content img {
+            width: 200px;
+            height: 200px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            background: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px;
+            font-size: 14px;
+        }
+
+        /* TELA DE REDIRECIONAMENTO */
+        #redirect-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--tsm-teal-light);
+            border-top: 5px solid var(--tsm-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .link-item { flex-direction: column; align-items: flex-start; }
+            .link-stats { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TELA DE TRANSIÇÃO DO REDIRECIONAMENTO -->
+<div id="redirect-screen">
+    <div class="spinner"></div>
+    <h2 style="color: var(--tsm-teal); margin-bottom: 8px;">Redirecionando...</h2>
+    <p id="redirect-target-text" style="color: var(--text-muted); font-size: 14px; word-break: break-all; max-width: 500px;"></p>
+</div>
+
+<div class="container" id="main-app">
+
+    <!-- HEADER COM LOGO OFICIAL TSM -->
+    <header>
+        <div class="logo-box">
+            <!-- VETOR DA LOGO TSM -->
+            <svg class="tsm-logo-svg" viewBox="0 0 500 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- CASINHA TEAL -->
+                <path d="M250 10 L370 100 V185 C370 198 360 205 347 205 H260 C252 205 245 198 245 190 C245 182 252 175 260 175 H345 V105 L250 35 L155 105 V175 H190 C198 175 205 182 205 190 C205 198 198 205 190 205 H153 C140 205 130 198 130 185 V100 L250 10 Z" fill="#0F5B72"/>
+                
+                <!-- CHIP TEAL -->
+                <rect x="202" y="90" width="96" height="75" rx="6" stroke="#0F5B72" stroke-width="8" fill="none"/>
+                <line x1="188" y1="108" x2="202" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                <line x1="188" y1="127" x2="202" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                <line x1="188" y1="146" x2="202" y2="146" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                <line x1="298" y1="108" x2="312" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                <line x1="298" y1="127" x2="312" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                <line x1="298" y1="146" x2="312" y2="146" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
+                
+                <!-- BROTO VERDE -->
+                <path d="M250 180 C250 125 230 105 200 70 C230 75 255 93 250 120 C265 98 295 75 325 60 C325 92 295 115 250 180 Z" fill="#69AF37"/>
+                <path d="M250 150 C241 133 223 124 205 120 C218 115 236 124 250 150 Z" fill="#69AF37"/>
+
+                <!-- LOGO TEXTO -->
+                <text x="130" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#0F5B72" letter-spacing="1">TS</text>
+                <text x="168" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#69AF37" letter-spacing="1">M</text>
+                <text x="202" y="213" font-family="'Segoe UI', sans-serif" font-weight="700" font-size="10" fill="#0F5B72" letter-spacing="0.5">TECNOLOGIA, SUSTENTABILIDADE E GESTÃO</text>
+            </svg>
+        </div>
+        
+        <h1>Encurtador de Links</h1>
+        <p>Crie apelidos customizados, gere QR Codes e acompanhe os cliques</p>
+    </header>
+
+    <!-- FORMULÁRIO DE ENCURTAMENTO -->
+    <div class="card">
+        <h2>🔗 Criar Link Customizado</h2>
+        <form id="shortener-form" onsubmit="criarLink(event)">
+            <div class="form-group">
+                <label for="original-url">URL de Destino (Link Original)</label>
+                <input type="text" id="original-url" placeholder="Ex: google.com ou https://meusite.com/pagina" required>
+            </div>
+
+            <div class="form-group">
+                <label for="custom-slug">Nome Customizado (Apelido)</label>
+                <div class="slug-wrapper">
+                    <span class="slug-prefix" id="domain-prefix">#</span>
+                    <input type="text" id="custom-slug" placeholder="ex: relatorio-2026" pattern="[a-zA-Z0-9-_]+" title="Apenas letras, números, hífen e underline" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Encurtar Link Agora</button>
+        </form>
+    </div>
+
+    <!-- LISTA DE LINKS -->
+    <div class="card">
+        <h2>📋 Meus Links Cadastrados</h2>
+        <div id="links-container" class="links-list">
+            <!-- Renderizado dinamicamente -->
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL QR CODE -->
+<div id="qr-modal" class="modal" onclick="fecharModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 style="color: var(--tsm-teal);">QR Code do Link</h3>
+        <img id="qr-image" src="" alt="QR Code">
+        <button class="btn-action" onclick="fecharModal()" style="width: 100%; background: var(--tsm-teal); color: white;">Fechar</button>
+    </div>
+</div>
+
+<script>
+    // BANCO DE DADOS LOCAL
+    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v2')) || {};
+
+    // NORMALIZA A URL (ADICIONA HTTPS:// SE FALTAR)
+    function formatarURL(url) {
+        url = url.trim();
+        if (!/^https?:\/\//i.test(url)) {
+            return 'https://' + url;
+        }
+        return url;
+    }
+
+    // RETORNA A URL BASE DO SISTEMA (COMPATÍVEL COM FILE:// E HTTP)
+    function getBaseURL() {
+        return window.location.href.split('#')[0].split('?')[0];
+    }
+
+    // SISTEMA DE REDIRECIONAMENTO AUTOMÁTICO
+    function verificarRedirecionamento() {
+        const hash = decodeURIComponent(window.location.hash.substring(1)).trim().toLowerCase();
+        
+        if (hash && linksDB[hash]) {
+            const item = linksDB[hash];
+            const target = formatarURL(item.originalUrl);
+
+            // Incrementar cliques
+            linksDB[hash].clicks = (linksDB[hash].clicks || 0) + 1;
+            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+
+            // Exibir tela de redirecionamento
+            document.getElementById('main-app').style.display = 'none';
+            const redirectScreen = document.getElementById('redirect-screen');
+            document.getElementById('redirect-target-text').innerText = target;
+            redirectScreen.style.display = 'flex';
+
+            // Redireciona
+            setTimeout(() => {
+                window.location.href = target;
+            }, 400);
+
+            return true;
+        }
+        return false;
+    }
+
+    // INICIALIZAÇÃO E MONITORAMENTO DE HASH
+    window.addEventListener('DOMContentLoaded', () => {
+        const prefixo = window.location.hostname ? `${window.location.hostname}/#` : '#';
+        document.getElementById('domain-prefix').innerText = prefixo;
+
+        if (!verificarRedirecionamento()) {
+            renderLinks();
+        }
+    });
+
+    // ESCUTA MUDANÇAS DE HASH NA URL
+    window.addEventListener('hashchange', () => {
+        verificarRedirecionamento();
+    });
+
+    // CRIAR NOVO LINK
+    function criarLink(event) {
+        event.preventDefault();
+
+        let originalUrl = document.getElementById('original-url').value.trim();
+        const customSlug = document.getElementById('custom-slug').value.trim().toLowerCase();
+
+        if (!originalUrl || !customSlug) return;
+
+        originalUrl = formatarURL(originalUrl);
+
+        // Verificar duplicidade
+        if (linksDB[customSlug]) {
+            alert(`⚠️ O nome customizado "${customSlug}" já está em uso! Escolha outro apelido.`);
+            return;
+        }
+
+        // Salvar
+        linksDB[customSlug] = {
+            originalUrl: originalUrl,
+            clicks: 0,
+            createdAt: new Date().toLocaleDateString('pt-BR')
+        };
+
+        localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+
+        document.getElementById('shortener-form').reset();
+        renderLinks();
+        alert(`✅ Link "${customSlug}" criado com sucesso!`);
+    }
+
+    // ABRIR E TESTAR DIRETO DA INTERFACE
+    function testarEContabilizar(slug) {
+        if (linksDB[slug]) {
+            linksDB[slug].clicks = (linksDB[slug].clicks || 0) + 1;
+            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+            renderLinks();
+
+            const target = formatarURL(linksDB[slug].originalUrl);
+            window.open(target, '_blank');
+        }
+    }
+
+    // RENDERIZAR LISTA
+    function renderLinks() {
+        const container = document.getElementById('links-container');
+        const keys = Object.keys(linksDB);
+
+        if (keys.length === 0) {
+            container.innerHTML = `<div class="empty-state">Nenhum link customizado cadastrado ainda.</div>`;
+            return;
+        }
+
+        const baseUrl = getBaseURL();
+
+        container.innerHTML = keys.map(slug => {
+            const item = linksDB[slug];
+            const fullShortUrl = `${baseUrl}#${slug}`;
+            const displayUrl = (window.location.hostname ? `${window.location.hostname}/#${slug}` : `#${slug}`);
+
+            return `
+                <div class="link-item">
+                    <div class="link-info">
+                        <a href="${fullShortUrl}" class="short-url">
+                            🔗 ${displayUrl}
+                        </a>
+                        <div class="original-url">Destino: ${item.originalUrl}</div>
+                    </div>
+
+                    <div class="link-stats">
+                        <span class="badge-clicks">📊 ${item.clicks} acessos</span>
+                        <div class="actions">
+                            <button class="btn-action btn-test" onclick="testarEContabilizar('${slug}')" title="Testar Redirecionamento">🚀 Testar</button>
+                            <button class="btn-action" onclick="copiarLink('${fullShortUrl}')" title="Copiar Link">📋 Copiar</button>
+                            <button class="btn-action" onclick="gerarQRCode('${fullShortUrl}')" title="Gerar QR Code">📱 QR</button>
+                            <button class="btn-action btn-delete" onclick="deletarLink('${slug}')" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).reverse().join('');
+    }
+
+    // COPIAR LINK COM FALLBACK PARA EXECUÇÃO LOCAL
+    function copiarLink(texto) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('📋 Link copiado para a área de transferência!');
+            }).catch(() => fallbackCopiar(texto));
+        } else {
+            fallbackCopiar(texto);
+        }
+    }
+
+    function fallbackCopiar(texto) {
+        const input = document.createElement('textarea');
+        input.value = texto;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('📋 Link copiado com sucesso!');
+    }
+
+    // QR CODE
+    function gerarQRCode(url) {
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+        document.getElementById('qr-image').src = qrUrl;
+        document.getElementById('qr-modal').style.display = 'flex';
+    }
+
+    function fecharModal(event) {
+        document.getElementById('qr-modal').style.display = 'none';
+    }
+
+    // DELETAR LINK
+    function deletarLink(slug) {
+        if (confirm(`Deseja apagar o link customizado "${slug}"?`)) {
+            delete linksDB[slug];
+            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+            renderLinks();
+        }
+    }
+</script>
+
+</body>
+</html>
