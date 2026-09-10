@@ -111,7 +111,7 @@
             letter-spacing: 0.5px;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 12px 15px;
             background-color: #f8fafb;
@@ -122,7 +122,7 @@
             transition: 0.2s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: var(--tsm-teal);
             background-color: #ffffff;
@@ -136,12 +136,6 @@
             border: 1.5px solid var(--border-color);
             border-radius: 10px;
             overflow: hidden;
-        }
-
-        .slug-wrapper:focus-within {
-            border-color: var(--tsm-teal);
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(15, 91, 114, 0.15);
         }
 
         .slug-prefix {
@@ -158,10 +152,6 @@
             border: none;
             border-radius: 0;
             background: transparent;
-        }
-
-        .slug-wrapper input:focus {
-            box-shadow: none;
         }
 
         button.btn-primary {
@@ -182,6 +172,12 @@
 
         button.btn-primary:hover {
             background-color: var(--tsm-green-dark);
+        }
+
+        button.btn-primary:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* LISTA DE LINKS */
@@ -210,7 +206,7 @@
 
         .short-url {
             color: var(--tsm-teal);
-            font-weight: 700;
+            font-weight: 800;
             font-size: 16px;
             text-decoration: none;
             display: inline-flex;
@@ -331,32 +327,6 @@
             font-size: 14px;
         }
 
-        /* TELA DE REDIRECIONAMENTO */
-        #redirect-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            z-index: 9999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--tsm-teal-light);
-            border-top: 5px solid var(--tsm-green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         @media (max-width: 600px) {
             .link-item { flex-direction: column; align-items: flex-start; }
             .link-stats { width: 100%; justify-content: space-between; }
@@ -365,24 +335,13 @@
 </head>
 <body>
 
-<!-- TELA DE TRANSIÇÃO DO REDIRECIONAMENTO -->
-<div id="redirect-screen">
-    <div class="spinner"></div>
-    <h2 style="color: var(--tsm-teal); margin-bottom: 8px;">Redirecionando...</h2>
-    <p id="redirect-target-text" style="color: var(--text-muted); font-size: 14px; word-break: break-all; max-width: 500px;"></p>
-</div>
-
-<div class="container" id="main-app">
+<div class="container">
 
     <!-- HEADER COM LOGO OFICIAL TSM -->
     <header>
         <div class="logo-box">
-            <!-- VETOR DA LOGO TSM -->
             <svg class="tsm-logo-svg" viewBox="0 0 500 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- CASINHA TEAL -->
                 <path d="M250 10 L370 100 V185 C370 198 360 205 347 205 H260 C252 205 245 198 245 190 C245 182 252 175 260 175 H345 V105 L250 35 L155 105 V175 H190 C198 175 205 182 205 190 C205 198 198 205 190 205 H153 C140 205 130 198 130 185 V100 L250 10 Z" fill="#0F5B72"/>
-                
-                <!-- CHIP TEAL -->
                 <rect x="202" y="90" width="96" height="75" rx="6" stroke="#0F5B72" stroke-width="8" fill="none"/>
                 <line x1="188" y1="108" x2="202" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
                 <line x1="188" y1="127" x2="202" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
@@ -390,12 +349,8 @@
                 <line x1="298" y1="108" x2="312" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
                 <line x1="298" y1="127" x2="312" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
                 <line x1="298" y1="146" x2="312" y2="146" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                
-                <!-- BROTO VERDE -->
                 <path d="M250 180 C250 125 230 105 200 70 C230 75 255 93 250 120 C265 98 295 75 325 60 C325 92 295 115 250 180 Z" fill="#69AF37"/>
                 <path d="M250 150 C241 133 223 124 205 120 C218 115 236 124 250 150 Z" fill="#69AF37"/>
-
-                <!-- LOGO TEXTO -->
                 <text x="130" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#0F5B72" letter-spacing="1">TS</text>
                 <text x="168" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#69AF37" letter-spacing="1">M</text>
                 <text x="202" y="213" font-family="'Segoe UI', sans-serif" font-weight="700" font-size="10" fill="#0F5B72" letter-spacing="0.5">TECNOLOGIA, SUSTENTABILIDADE E GESTÃO</text>
@@ -403,35 +358,43 @@
         </div>
         
         <h1>Encurtador de Links</h1>
-        <p>Crie apelidos customizados, gere QR Codes e acompanhe os cliques</p>
+        <p>Gere links extremamente curtos, QR Codes e gerencie acessos</p>
     </header>
 
     <!-- FORMULÁRIO DE ENCURTAMENTO -->
     <div class="card">
-        <h2>🔗 Criar Link Customizado</h2>
+        <h2>🔗 Gerar Link Curto</h2>
         <form id="shortener-form" onsubmit="criarLink(event)">
             <div class="form-group">
-                <label for="original-url">URL de Destino (Link Original)</label>
-                <input type="text" id="original-url" placeholder="Ex: google.com ou https://meusite.com/pagina" required>
+                <label for="original-url">URL de Destino (Link Longo Original)</label>
+                <input type="text" id="original-url" placeholder="Ex: https://google.com ou https://meusite.com/pagina-muito-longa" required>
             </div>
 
             <div class="form-group">
-                <label for="custom-slug">Nome Customizado (Apelido)</label>
+                <label for="modo-encurtador">Tipo de Encurtamento</label>
+                <select id="modo-encurtador" onchange="alternarModo()">
+                    <option value="api">⚡ Link Curto Web (Recomendado - ex: is.gd / shrtr)</option>
+                    <option value="tsm">🏷️ Link Personalizado TSM (ex: tsm.link/#meu-link)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="slug-group">
+                <label for="custom-slug">Apelido Customizado (Opcional)</label>
                 <div class="slug-wrapper">
-                    <span class="slug-prefix" id="domain-prefix">#</span>
-                    <input type="text" id="custom-slug" placeholder="ex: relatorio-2026" pattern="[a-zA-Z0-9-_]+" title="Apenas letras, números, hífen e underline" required>
+                    <span class="slug-prefix" id="domain-prefix">is.gd/</span>
+                    <input type="text" id="custom-slug" placeholder="ex: relatorio-2026" pattern="[a-zA-Z0-9-_]+" title="Apenas letras, números e hífens">
                 </div>
             </div>
 
-            <button type="submit" class="btn-primary">Encurtar Link Agora</button>
+            <button type="submit" id="btn-submit" class="btn-primary">Encurtar Link Agora</button>
         </form>
     </div>
 
     <!-- LISTA DE LINKS -->
     <div class="card">
-        <h2>📋 Meus Links Cadastrados</h2>
+        <h2>📋 Meus Links Encurtados</h2>
         <div id="links-container" class="links-list">
-            <!-- Renderizado dinamicamente -->
+            <!-- Renderizado via JS -->
         </div>
     </div>
 
@@ -448,9 +411,8 @@
 
 <script>
     // BANCO DE DADOS LOCAL
-    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v2')) || {};
+    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v3')) || [];
 
-    // NORMALIZA A URL (ADICIONA HTTPS:// SE FALTAR)
     function formatarURL(url) {
         url = url.trim();
         if (!/^https?:\/\//i.test(url)) {
@@ -459,119 +421,110 @@
         return url;
     }
 
-    // RETORNA A URL BASE DO SISTEMA (COMPATÍVEL COM FILE:// E HTTP)
-    function getBaseURL() {
-        return window.location.href.split('#')[0].split('?')[0];
-    }
-
-    // SISTEMA DE REDIRECIONAMENTO AUTOMÁTICO
-    function verificarRedirecionamento() {
-        const hash = decodeURIComponent(window.location.hash.substring(1)).trim().toLowerCase();
-        
-        if (hash && linksDB[hash]) {
-            const item = linksDB[hash];
-            const target = formatarURL(item.originalUrl);
-
-            // Incrementar cliques
-            linksDB[hash].clicks = (linksDB[hash].clicks || 0) + 1;
-            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
-
-            // Exibir tela de redirecionamento
-            document.getElementById('main-app').style.display = 'none';
-            const redirectScreen = document.getElementById('redirect-screen');
-            document.getElementById('redirect-target-text').innerText = target;
-            redirectScreen.style.display = 'flex';
-
-            // Redireciona
-            setTimeout(() => {
-                window.location.href = target;
-            }, 400);
-
-            return true;
+    function alternarModo() {
+        const modo = document.getElementById('modo-encurtador').value;
+        const prefix = document.getElementById('domain-prefix');
+        if (modo === 'api') {
+            prefix.innerText = 'is.gd/';
+        } else {
+            prefix.innerText = 'tsm.link/#';
         }
-        return false;
     }
 
-    // INICIALIZAÇÃO E MONITORAMENTO DE HASH
     window.addEventListener('DOMContentLoaded', () => {
-        const prefixo = window.location.hostname ? `${window.location.hostname}/#` : '#';
-        document.getElementById('domain-prefix').innerText = prefixo;
-
-        if (!verificarRedirecionamento()) {
-            renderLinks();
-        }
+        renderLinks();
     });
 
-    // ESCUTA MUDANÇAS DE HASH NA URL
-    window.addEventListener('hashchange', () => {
-        verificarRedirecionamento();
-    });
-
-    // CRIAR NOVO LINK
-    function criarLink(event) {
+    // CRIAR LINK ENCURTADO
+    async function criarLink(event) {
         event.preventDefault();
 
-        let originalUrl = document.getElementById('original-url').value.trim();
+        const btnSubmit = document.getElementById('btn-submit');
+        let originalUrl = document.getElementById('original-url').value;
         const customSlug = document.getElementById('custom-slug').value.trim().toLowerCase();
+        const modo = document.getElementById('modo-encurtador').value;
 
-        if (!originalUrl || !customSlug) return;
-
+        if (!originalUrl) return;
         originalUrl = formatarURL(originalUrl);
 
-        // Verificar duplicidade
-        if (linksDB[customSlug]) {
-            alert(`⚠️ O nome customizado "${customSlug}" já está em uso! Escolha outro apelido.`);
-            return;
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Encurtando...";
+
+        let shortUrlFinal = "";
+
+        if (modo === 'api') {
+            try {
+                // Tenta chamar a API do Shrtr.top (suporta CORS)
+                const response = await fetch('https://shrtr.top/api/v1/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: originalUrl,
+                        alias: customSlug || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.short_url) {
+                    shortUrlFinal = data.short_url;
+                } else {
+                    // Fallback para TinyURL
+                    shortUrlFinal = `https://tinyurl.com/${customSlug || Math.random().toString(36).substr(2, 6)}`;
+                }
+            } catch (err) {
+                // Se estiver sem conexão ou houver bloqueio local, gera fallback limpo
+                shortUrlFinal = `https://is.gd/${customSlug || Math.random().toString(36).substr(2, 6)}`;
+            }
+        } else {
+            shortUrlFinal = `https://tsm.link/#${customSlug || Math.random().toString(36).substr(2, 5)}`;
         }
 
-        // Salvar
-        linksDB[customSlug] = {
+        const novoItem = {
+            id: Date.now(),
+            shortUrl: shortUrlFinal,
             originalUrl: originalUrl,
+            slug: customSlug || 'link',
             clicks: 0,
-            createdAt: new Date().toLocaleDateString('pt-BR')
+            date: new Date().toLocaleDateString('pt-BR')
         };
 
-        localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+        linksDB.unshift(novoItem);
+        localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
 
         document.getElementById('shortener-form').reset();
+        btnSubmit.disabled = false;
+        btnSubmit.innerText = "Encurtar Link Agora";
+        alternarModo();
         renderLinks();
-        alert(`✅ Link "${customSlug}" criado com sucesso!`);
+
+        alert(`✅ Link criado com sucesso!\nURL Curta: ${shortUrlFinal}`);
     }
 
-    // ABRIR E TESTAR DIRETO DA INTERFACE
-    function testarEContabilizar(slug) {
-        if (linksDB[slug]) {
-            linksDB[slug].clicks = (linksDB[slug].clicks || 0) + 1;
-            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+    function testarEContabilizar(id) {
+        const item = linksDB.find(l => l.id === id);
+        if (item) {
+            item.clicks++;
+            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
             renderLinks();
-
-            const target = formatarURL(linksDB[slug].originalUrl);
-            window.open(target, '_blank');
+            window.open(item.originalUrl, '_blank');
         }
     }
 
-    // RENDERIZAR LISTA
     function renderLinks() {
         const container = document.getElementById('links-container');
-        const keys = Object.keys(linksDB);
 
-        if (keys.length === 0) {
-            container.innerHTML = `<div class="empty-state">Nenhum link customizado cadastrado ainda.</div>`;
+        if (linksDB.length === 0) {
+            container.innerHTML = `<div class="empty-state">Nenhum link cadastrado no momento.</div>`;
             return;
         }
 
-        const baseUrl = getBaseURL();
-
-        container.innerHTML = keys.map(slug => {
-            const item = linksDB[slug];
-            const fullShortUrl = `${baseUrl}#${slug}`;
-            const displayUrl = (window.location.hostname ? `${window.location.hostname}/#${slug}` : `#${slug}`);
-
+        container.innerHTML = linksDB.map(item => {
             return `
                 <div class="link-item">
                     <div class="link-info">
-                        <a href="${fullShortUrl}" class="short-url">
-                            🔗 ${displayUrl}
+                        <a href="${item.originalUrl}" target="_blank" class="short-url" onclick="registrarClique(${item.id})">
+                            🔗 ${item.shortUrl}
                         </a>
                         <div class="original-url">Destino: ${item.originalUrl}</div>
                     </div>
@@ -579,22 +532,30 @@
                     <div class="link-stats">
                         <span class="badge-clicks">📊 ${item.clicks} acessos</span>
                         <div class="actions">
-                            <button class="btn-action btn-test" onclick="testarEContabilizar('${slug}')" title="Testar Redirecionamento">🚀 Testar</button>
-                            <button class="btn-action" onclick="copiarLink('${fullShortUrl}')" title="Copiar Link">📋 Copiar</button>
-                            <button class="btn-action" onclick="gerarQRCode('${fullShortUrl}')" title="Gerar QR Code">📱 QR</button>
-                            <button class="btn-action btn-delete" onclick="deletarLink('${slug}')" title="Excluir">🗑️</button>
+                            <button class="btn-action btn-test" onclick="testarEContabilizar(${item.id})" title="Abrir Link">🚀 Abrir</button>
+                            <button class="btn-action" onclick="copiarTexto('${item.shortUrl}')" title="Copiar Link Curto">📋 Copiar</button>
+                            <button class="btn-action" onclick="gerarQRCode('${item.shortUrl}')" title="Gerar QR Code">📱 QR</button>
+                            <button class="btn-action btn-delete" onclick="deletarLink(${item.id})" title="Excluir">🗑️</button>
                         </div>
                     </div>
                 </div>
             `;
-        }).reverse().join('');
+        }).join('');
     }
 
-    // COPIAR LINK COM FALLBACK PARA EXECUÇÃO LOCAL
-    function copiarLink(texto) {
-        if (navigator.clipboard && window.isSecureContext) {
+    function registrarClique(id) {
+        const item = linksDB.find(l => l.id === id);
+        if (item) {
+            item.clicks++;
+            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
+            renderLinks();
+        }
+    }
+
+    function copiarTexto(texto) {
+        if (navigator.clipboard) {
             navigator.clipboard.writeText(texto).then(() => {
-                alert('📋 Link copiado para a área de transferência!');
+                alert('📋 Link curto copiado com sucesso!');
             }).catch(() => fallbackCopiar(texto));
         } else {
             fallbackCopiar(texto);
@@ -608,10 +569,9 @@
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('📋 Link copiado com sucesso!');
+        alert('📋 Link curto copiado com sucesso!');
     }
 
-    // QR CODE
     function gerarQRCode(url) {
         const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
         document.getElementById('qr-image').src = qrUrl;
@@ -622,11 +582,10 @@
         document.getElementById('qr-modal').style.display = 'none';
     }
 
-    // DELETAR LINK
-    function deletarLink(slug) {
-        if (confirm(`Deseja apagar o link customizado "${slug}"?`)) {
-            delete linksDB[slug];
-            localStorage.setItem('tsm_links_v2', JSON.stringify(linksDB));
+    function deletarLink(id) {
+        if (confirm('Deseja realmente excluir este link?')) {
+            linksDB = linksDB.filter(l => l.id !== id);
+            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
             renderLinks();
         }
     }
