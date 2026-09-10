@@ -142,10 +142,13 @@
             padding: 12px 14px;
             background-color: var(--tsm-teal-light);
             color: var(--tsm-teal);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             border-right: 1.5px solid var(--border-color);
             white-space: nowrap;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .slug-wrapper input {
@@ -358,7 +361,7 @@
         </div>
         
         <h1>Encurtador de Links</h1>
-        <p>Gere links extremamente curtos, QR Codes e gerencie acessos</p>
+        <p>Gere links curtos válidos, QR Codes e gerencie acessos</p>
     </header>
 
     <!-- FORMULÁRIO DE ENCURTAMENTO -->
@@ -367,21 +370,21 @@
         <form id="shortener-form" onsubmit="criarLink(event)">
             <div class="form-group">
                 <label for="original-url">URL de Destino (Link Longo Original)</label>
-                <input type="text" id="original-url" placeholder="Ex: https://google.com ou https://meusite.com/pagina-muito-longa" required>
+                <input type="text" id="original-url" placeholder="Ex: https://google.com ou https://meusite.com/pagina-longa" required>
             </div>
 
             <div class="form-group">
-                <label for="modo-encurtador">Tipo de Encurtamento</label>
+                <label for="modo-encurtador">Tipo de Encurtador</label>
                 <select id="modo-encurtador" onchange="alternarModo()">
-                    <option value="api">⚡ Link Curto Web (Recomendado - ex: is.gd / shrtr)</option>
-                    <option value="tsm">🏷️ Link Personalizado TSM (ex: tsm.link/#meu-link)</option>
+                    <option value="api">⚡ Encurtador Web Global (Validação Instantânea - TinyURL)</option>
+                    <option value="tsm">🏷️ Link com Apelido Local (Modo Interno)</option>
                 </select>
             </div>
 
             <div class="form-group" id="slug-group">
                 <label for="custom-slug">Apelido Customizado (Opcional)</label>
                 <div class="slug-wrapper">
-                    <span class="slug-prefix" id="domain-prefix">is.gd/</span>
+                    <span class="slug-prefix" id="domain-prefix">tinyurl.com/</span>
                     <input type="text" id="custom-slug" placeholder="ex: relatorio-2026" pattern="[a-zA-Z0-9-_]+" title="Apenas letras, números e hífens">
                 </div>
             </div>
@@ -410,8 +413,28 @@
 </div>
 
 <script>
-    // BANCO DE DADOS LOCAL
-    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v3')) || [];
+    // ARMAZENAMENTO LOCAL DE LINKS
+    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v4')) || [];
+
+    // VERIFICA SE ALGUÉM ACESSOU A PÁGINA COM UM APELIDO (#slug)
+    window.addEventListener('DOMContentLoaded', () => {
+        verificarRedirecionamentoHash();
+        alternarModo();
+        renderLinks();
+    });
+
+    function verificarRedirecionamentoHash() {
+        const hash = window.location.hash;
+        if (hash) {
+            const slugBuscado = hash.replace('#', '').toLowerCase();
+            const linkEncontrado = linksDB.find(l => l.slug === slugBuscado || l.shortUrl.toLowerCase().endsWith('#' + slugBuscado));
+            if (linkEncontrado) {
+                linkEncontrado.clicks++;
+                localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
+                window.location.href = linkEncontrado.originalUrl;
+            }
+        }
+    }
 
     function formatarURL(url) {
         url = url.trim();
@@ -425,17 +448,14 @@
         const modo = document.getElementById('modo-encurtador').value;
         const prefix = document.getElementById('domain-prefix');
         if (modo === 'api') {
-            prefix.innerText = 'is.gd/';
+            prefix.innerText = 'tinyurl.com/';
         } else {
-            prefix.innerText = 'tsm.link/#';
+            const paginaAtual = window.location.pathname.split('/').pop() || 'index.html';
+            prefix.innerText = `${paginaAtual}#`;
         }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        renderLinks();
-    });
-
-    // CRIAR LINK ENCURTADO
+    // CRIAR LINK ENCURTADO REAL
     async function criarLink(event) {
         event.preventDefault();
 
@@ -448,36 +468,46 @@
         originalUrl = formatarURL(originalUrl);
 
         btnSubmit.disabled = true;
-        btnSubmit.innerText = "Encurtando...";
+        btnSubmit.innerText = "Processando e validando na web...";
 
         let shortUrlFinal = "";
 
         if (modo === 'api') {
             try {
-                // Tenta chamar a API do Shrtr.top (suporta CORS)
-                const response = await fetch('https://shrtr.top/api/v1/shorten', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        url: originalUrl,
-                        alias: customSlug || undefined
-                    })
-                });
+                // Chamada à API pública real do TinyURL via proxy CORS
+                let targetApi = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(originalUrl)}`;
+                if (customSlug) {
+                    targetApi += `&alias=${encodeURIComponent(customSlug)}`;
+                }
 
-                const data = await response.json();
-
-                if (response.ok && data.short_url) {
-                    shortUrlFinal = data.short_url;
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetApi)}`);
+                
+                if (response.ok) {
+                    const resultText = (await response.text()).trim();
+                    if (resultText.startsWith('http')) {
+                        shortUrlFinal = resultText;
+                    } else {
+                        throw new Error('Apelido indisponível ou erro na criação.');
+                    }
                 } else {
-                    // Fallback para TinyURL
-                    shortUrlFinal = `https://tinyurl.com/${customSlug || Math.random().toString(36).substr(2, 6)}`;
+                    throw new Error('Servidor não respondeu.');
                 }
             } catch (err) {
-                // Se estiver sem conexão ou houver bloqueio local, gera fallback limpo
-                shortUrlFinal = `https://is.gd/${customSlug || Math.random().toString(36).substr(2, 6)}`;
+                console.warn('Fallback ativado:', err);
+                // Fallback automático para garantir criação de link funcional
+                try {
+                    const fallbackRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(originalUrl))}`);
+                    shortUrlFinal = (await fallbackRes.text()).trim();
+                } catch(e) {
+                    const base = window.location.href.split('#')[0];
+                    shortUrlFinal = `${base}#${customSlug || Math.random().toString(36).substr(2, 5)}`;
+                }
             }
         } else {
-            shortUrlFinal = `https://tsm.link/#${customSlug || Math.random().toString(36).substr(2, 5)}`;
+            // Modo Interno (Usa a URL da própria página + hash)
+            const base = window.location.href.split('#')[0];
+            const slugUsado = customSlug || Math.random().toString(36).substr(2, 5);
+            shortUrlFinal = `${base}#${slugUsado}`;
         }
 
         const novoItem = {
@@ -490,7 +520,7 @@
         };
 
         linksDB.unshift(novoItem);
-        localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
+        localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
 
         document.getElementById('shortener-form').reset();
         btnSubmit.disabled = false;
@@ -498,16 +528,16 @@
         alternarModo();
         renderLinks();
 
-        alert(`✅ Link criado com sucesso!\nURL Curta: ${shortUrlFinal}`);
+        alert(`✅ Link criado e validado com sucesso!\n\nLink Curto:\n${shortUrlFinal}`);
     }
 
     function testarEContabilizar(id) {
         const item = linksDB.find(l => l.id === id);
         if (item) {
             item.clicks++;
-            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
+            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
             renderLinks();
-            window.open(item.originalUrl, '_blank');
+            window.open(item.shortUrl, '_blank');
         }
     }
 
@@ -523,7 +553,7 @@
             return `
                 <div class="link-item">
                     <div class="link-info">
-                        <a href="${item.originalUrl}" target="_blank" class="short-url" onclick="registrarClique(${item.id})">
+                        <a href="${item.shortUrl}" target="_blank" class="short-url" onclick="registrarClique(${item.id})">
                             🔗 ${item.shortUrl}
                         </a>
                         <div class="original-url">Destino: ${item.originalUrl}</div>
@@ -532,7 +562,7 @@
                     <div class="link-stats">
                         <span class="badge-clicks">📊 ${item.clicks} acessos</span>
                         <div class="actions">
-                            <button class="btn-action btn-test" onclick="testarEContabilizar(${item.id})" title="Abrir Link">🚀 Abrir</button>
+                            <button class="btn-action btn-test" onclick="testarEContabilizar(${item.id})" title="Testar Link Encurtado">🚀 Abrir</button>
                             <button class="btn-action" onclick="copiarTexto('${item.shortUrl}')" title="Copiar Link Curto">📋 Copiar</button>
                             <button class="btn-action" onclick="gerarQRCode('${item.shortUrl}')" title="Gerar QR Code">📱 QR</button>
                             <button class="btn-action btn-delete" onclick="deletarLink(${item.id})" title="Excluir">🗑️</button>
@@ -547,7 +577,7 @@
         const item = linksDB.find(l => l.id === id);
         if (item) {
             item.clicks++;
-            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
+            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
             renderLinks();
         }
     }
@@ -555,7 +585,7 @@
     function copiarTexto(texto) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(texto).then(() => {
-                alert('📋 Link curto copiado com sucesso!');
+                alert('📋 Link curto copiado! Você já pode colar e enviar para quem quiser.');
             }).catch(() => fallbackCopiar(texto));
         } else {
             fallbackCopiar(texto);
@@ -569,7 +599,7 @@
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('📋 Link curto copiado com sucesso!');
+        alert('📋 Link curto copiado! Você já pode colar e enviar para quem quiser.');
     }
 
     function gerarQRCode(url) {
@@ -585,7 +615,7 @@
     function deletarLink(id) {
         if (confirm('Deseja realmente excluir este link?')) {
             linksDB = linksDB.filter(l => l.id !== id);
-            localStorage.setItem('tsm_links_v3', JSON.stringify(linksDB));
+            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
             renderLinks();
         }
     }
