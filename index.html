@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSM | Encurtador de Links Oficial</title>
+    <title>TSM | Encurtador de Links Oficial Pro</title>
     <style>
         :root {
             --tsm-teal: #0f5b72;
@@ -18,6 +18,7 @@
             --text-muted: #64748b;
             --border-color: #cbe0e5;
             --danger: #ef4444;
+            --success-toast: #10b981;
         }
 
         * {
@@ -39,7 +40,7 @@
 
         .container {
             width: 100%;
-            max-width: 820px;
+            max-width: 860px;
         }
 
         /* HEADER E LOGO TSM */
@@ -93,7 +94,47 @@
             color: var(--tsm-teal);
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
+        }
+
+        /* MÉTRICAS / SUMMARY */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: var(--tsm-teal-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .metric-icon {
+            font-size: 28px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .metric-info h3 {
+            font-size: 12px;
+            color: var(--tsm-teal);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .metric-info p {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--tsm-teal-dark);
         }
 
         /* FORMULÁRIO */
@@ -183,6 +224,38 @@
             box-shadow: none;
         }
 
+        /* TOOLBAR DA LISTA */
+        .list-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .list-toolbar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+
+        .btn-toolbar {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-color);
+            background: white;
+            color: var(--tsm-teal);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-toolbar:hover {
+            background: var(--tsm-teal-light);
+            border-color: var(--tsm-teal);
+        }
+
         /* LISTA DE LINKS */
         .links-list {
             display: flex;
@@ -200,6 +273,12 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            transition: 0.2s;
+        }
+
+        .link-item:hover {
+            border-color: var(--tsm-teal);
+            box-shadow: 0 2px 8px rgba(15, 91, 114, 0.05);
         }
 
         .link-info {
@@ -290,6 +369,44 @@
             border-color: var(--danger);
         }
 
+        /* TOAST NOTIFICAÇÃO FLUTUANTE */
+        #toast-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--text-dark);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            max-width: 320px;
+        }
+
+        .toast.success { background: #065f46; border-left: 5px solid var(--success-toast); }
+        .toast.error { background: #991b1b; border-left: 5px solid var(--danger); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
         /* MODAL QR CODE */
         .modal {
             display: none;
@@ -360,9 +477,27 @@
             </svg>
         </div>
         
-        <h1>Encurtador de Links</h1>
-        <p>Gere links curtos válidos, QR Codes e gerencie acessos</p>
+        <h1>Encurtador de Links Pro</h1>
+        <p>Gere links curtos de alta performance, rastreie acessos e crie QR Codes instantâneos</p>
     </header>
+
+    <!-- PAINEL DE MÉTRICAS -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon">🔗</div>
+            <div class="metric-info">
+                <h3>Total de Links</h3>
+                <p id="stat-total-links">0</p>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-info">
+                <h3>Cliques Totais</h3>
+                <p id="stat-total-clicks">0</p>
+            </div>
+        </div>
+    </div>
 
     <!-- FORMULÁRIO DE ENCURTAMENTO -->
     <div class="card">
@@ -393,9 +528,21 @@
         </form>
     </div>
 
-    <!-- LISTA DE LINKS -->
+    <!-- LISTA DE LINKS COM BUSCA E FERRAMENTAS -->
     <div class="card">
-        <h2>📋 Meus Links Encurtados</h2>
+        <h2>
+            <span>📋 Meus Links Encurtados</span>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-toolbar" onclick="exportarBackup()" title="Baixar Backup em JSON">💾 Exportar</button>
+                <button class="btn-toolbar" onclick="document.getElementById('import-file').click()" title="Restaurar de arquivo JSON">📂 Importar</button>
+                <input type="file" id="import-file" style="display:none" accept=".json" onchange="importarBackup(event)">
+            </div>
+        </h2>
+
+        <div class="list-toolbar">
+            <input type="text" id="search-input" placeholder="🔍 Filtrar links por URL ou apelido..." oninput="renderLinks()">
+        </div>
+
         <div id="links-container" class="links-list">
             <!-- Renderizado via JS -->
         </div>
@@ -403,25 +550,45 @@
 
 </div>
 
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
 <!-- MODAL QR CODE -->
 <div id="qr-modal" class="modal" onclick="fecharModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h3 style="color: var(--tsm-teal);">QR Code do Link</h3>
+        <h3 style="color: var(--tsm-teal); margin-bottom: 10px;">QR Code do Link</h3>
         <img id="qr-image" src="" alt="QR Code">
-        <button class="btn-action" onclick="fecharModal()" style="width: 100%; background: var(--tsm-teal); color: white;">Fechar</button>
+        <button class="btn-action" onclick="fecharModal()" style="width: 100%; background: var(--tsm-teal); color: white; padding: 10px;">Fechar</button>
     </div>
 </div>
 
 <script>
     // ARMAZENAMENTO LOCAL DE LINKS
-    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v4')) || [];
+    let linksDB = JSON.parse(localStorage.getItem('tsm_links_v5')) || [];
 
-    // VERIFICA SE ALGUÉM ACESSOU A PÁGINA COM UM APELIDO (#slug)
+    // VERIFICA REDIRECIONAMENTO HASH AO CARREGAR
     window.addEventListener('DOMContentLoaded', () => {
         verificarRedirecionamentoHash();
         alternarModo();
+        atualizarMetricas();
         renderLinks();
     });
+
+    function mostrarToast(mensagem, tipo = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`;
+        toast.innerHTML = `<span>${tipo === 'success' ? '✅' : '⚠️'}</span> ${mensagem}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function atualizarMetricas() {
+        const totalLinks = linksDB.length;
+        const totalCliques = linksDB.reduce((acc, item) => acc + item.clicks, 0);
+        document.getElementById('stat-total-links').innerText = totalLinks;
+        document.getElementById('stat-total-clicks').innerText = totalCliques;
+    }
 
     function verificarRedirecionamentoHash() {
         const hash = window.location.hash;
@@ -430,7 +597,7 @@
             const linkEncontrado = linksDB.find(l => l.slug === slugBuscado || l.shortUrl.toLowerCase().endsWith('#' + slugBuscado));
             if (linkEncontrado) {
                 linkEncontrado.clicks++;
-                localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
+                localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
                 window.location.href = linkEncontrado.originalUrl;
             }
         }
@@ -455,7 +622,7 @@
         }
     }
 
-    // CRIAR LINK ENCURTADO REAL
+    // CRIAR LINK ENCURTADO
     async function criarLink(event) {
         event.preventDefault();
 
@@ -474,7 +641,6 @@
 
         if (modo === 'api') {
             try {
-                // Chamada à API pública real do TinyURL via proxy CORS
                 let targetApi = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(originalUrl)}`;
                 if (customSlug) {
                     targetApi += `&alias=${encodeURIComponent(customSlug)}`;
@@ -494,7 +660,6 @@
                 }
             } catch (err) {
                 console.warn('Fallback ativado:', err);
-                // Fallback automático para garantir criação de link funcional
                 try {
                     const fallbackRes = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(originalUrl))}`);
                     shortUrlFinal = (await fallbackRes.text()).trim();
@@ -504,7 +669,6 @@
                 }
             }
         } else {
-            // Modo Interno (Usa a URL da própria página + hash)
             const base = window.location.href.split('#')[0];
             const slugUsado = customSlug || Math.random().toString(36).substr(2, 5);
             shortUrlFinal = `${base}#${slugUsado}`;
@@ -520,36 +684,34 @@
         };
 
         linksDB.unshift(novoItem);
-        localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
+        localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
 
         document.getElementById('shortener-form').reset();
         btnSubmit.disabled = false;
         btnSubmit.innerText = "Encurtar Link Agora";
         alternarModo();
+        atualizarMetricas();
         renderLinks();
 
-        alert(`✅ Link criado e validado com sucesso!\n\nLink Curto:\n${shortUrlFinal}`);
-    }
-
-    function testarEContabilizar(id) {
-        const item = linksDB.find(l => l.id === id);
-        if (item) {
-            item.clicks++;
-            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
-            renderLinks();
-            window.open(item.shortUrl, '_blank');
-        }
+        mostrarToast("Link criado com sucesso!");
     }
 
     function renderLinks() {
         const container = document.getElementById('links-container');
+        const termoBusca = document.getElementById('search-input').value.toLowerCase();
 
-        if (linksDB.length === 0) {
-            container.innerHTML = `<div class="empty-state">Nenhum link cadastrado no momento.</div>`;
+        const linksFiltrados = linksDB.filter(item => 
+            item.shortUrl.toLowerCase().includes(termoBusca) || 
+            item.originalUrl.toLowerCase().includes(termoBusca) ||
+            item.slug.toLowerCase().includes(termoBusca)
+        );
+
+        if (linksFiltrados.length === 0) {
+            container.innerHTML = `<div class="empty-state">Nenhum link encontrado.</div>`;
             return;
         }
 
-        container.innerHTML = linksDB.map(item => {
+        container.innerHTML = linksFiltrados.map(item => {
             return `
                 <div class="link-item">
                     <div class="link-info">
@@ -573,11 +735,23 @@
         }).join('');
     }
 
+    function testarEContabilizar(id) {
+        const item = linksDB.find(l => l.id === id);
+        if (item) {
+            item.clicks++;
+            localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
+            atualizarMetricas();
+            renderLinks();
+            window.open(item.shortUrl, '_blank');
+        }
+    }
+
     function registrarClique(id) {
         const item = linksDB.find(l => l.id === id);
         if (item) {
             item.clicks++;
-            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
+            localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
+            atualizarMetricas();
             renderLinks();
         }
     }
@@ -585,7 +759,7 @@
     function copiarTexto(texto) {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(texto).then(() => {
-                alert('📋 Link curto copiado! Você já pode colar e enviar para quem quiser.');
+                mostrarToast("Link copiado para a área de transferência!");
             }).catch(() => fallbackCopiar(texto));
         } else {
             fallbackCopiar(texto);
@@ -599,7 +773,7 @@
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('📋 Link curto copiado! Você já pode colar e enviar para quem quiser.');
+        mostrarToast("Link copiado para a área de transferência!");
     }
 
     function gerarQRCode(url) {
@@ -615,9 +789,45 @@
     function deletarLink(id) {
         if (confirm('Deseja realmente excluir este link?')) {
             linksDB = linksDB.filter(l => l.id !== id);
-            localStorage.setItem('tsm_links_v4', JSON.stringify(linksDB));
+            localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
+            atualizarMetricas();
             renderLinks();
+            mostrarToast("Link excluído com sucesso.", "error");
         }
+    }
+
+    function exportarBackup() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(linksDB, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `tsm_links_backup_${new Date().toISOString().slice(0,10)}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+        mostrarToast("Backup exportado com sucesso!");
+    }
+
+    function importarBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    linksDB = importedData;
+                    localStorage.setItem('tsm_links_v5', JSON.stringify(linksDB));
+                    atualizarMetricas();
+                    renderLinks();
+                    mostrarToast("Backup importado com sucesso!");
+                } else {
+                    throw new Error("Formato inválido");
+                }
+            } catch(err) {
+                mostrarToast("Erro ao importar arquivo de backup.", "error");
+            }
+        };
+        reader.readAsText(file);
     }
 </script>
 
