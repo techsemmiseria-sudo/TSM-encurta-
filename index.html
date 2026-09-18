@@ -1,973 +1,308 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TSM Encurtador de Links Pro - Gere links curtos, rastreie acessos e crie QR Codes instantâneos.">
-    <title>TSM | Encurtador de Links Oficial Pro</title>
-    <style>
-        :root {
-            --tsm-teal: #0f5b72;
-            --tsm-teal-dark: #0a4152;
-            --tsm-teal-light: #e6f2f5;
-            --tsm-green: #69af37;
-            --tsm-green-dark: #55912b;
-            --tsm-green-light: #eff8ea;
-            --bg-color: #f2f7f8;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #cbe0e5;
-            --danger: #ef4444;
-            --danger-light: #fef2f2;
-            --success-toast: #10b981;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TSM Shortener - Encurtador de Links</title>
+  <!-- Fonte Google para visual moderno e divertido -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-blue: #0B5C82;
+      --primary-green: #6BB343;
+      --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #e8f5e9 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-color: #2c3e50;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--text-color);
+    }
 
-        .container {
-            width: 100%;
-            max-width: 860px;
-        }
+    .container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 520px;
+      padding: 40px 30px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(11, 92, 130, 0.15);
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
 
-        /* HEADER E LOGO TSM */
-        header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+    .container:hover {
+      transform: translateY(-5px);
+    }
 
-        .logo-box {
-            background: var(--card-bg);
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 35px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 20px rgba(15, 91, 114, 0.06);
-            margin-bottom: 15px;
-        }
+    .logo-container {
+      margin-bottom: 20px;
+    }
 
-        .tsm-logo-svg {
-            width: 220px;
-            height: auto;
-        }
+    .logo-container img {
+      max-width: 220px;
+      height: auto;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+    }
 
-        header h1 {
-            font-size: 22px;
-            color: var(--tsm-teal);
-            font-weight: 800;
-        }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 8px;
+    }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: 4px;
-        }
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 30px;
+    }
 
-        /* CARDS */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-        }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
 
-        .card h2 {
-            font-size: 18px;
-            margin-bottom: 18px;
-            color: var(--tsm-teal);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    input[type="url"] {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid #e0e6ed;
+      border-radius: 16px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
 
-        /* MÉTRICAS */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+    input[type="url"]:focus {
+      border-color: var(--primary-green);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(107, 179, 67, 0.2);
+    }
 
-        .metric-card {
-            background: var(--tsm-teal-light);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+    button.btn-shorten {
+      background: linear-gradient(45deg, var(--primary-blue), var(--primary-green));
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 15px rgba(11, 92, 130, 0.2);
+    }
 
-        .metric-icon {
-            font-size: 28px;
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+    button.btn-shorten:hover {
+      opacity: 0.95;
+      transform: scale(1.02);
+      box-shadow: 0 12px 20px rgba(107, 179, 67, 0.3);
+    }
 
-        .metric-info h3 {
-            font-size: 12px;
-            color: var(--tsm-teal);
-            text-transform: uppercase;
-            font-weight: 700;
-        }
+    button.btn-shorten:active {
+      transform: scale(0.98);
+    }
 
-        .metric-info p {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--tsm-teal-dark);
-        }
+    /* Card de Resultado */
+    .result-card {
+      display: none;
+      background: #f0fdf4;
+      border: 2px dashed var(--primary-green);
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 20px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
 
-        /* FORMULÁRIO */
-        .form-group {
-            margin-bottom: 16px;
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--tsm-teal);
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .result-card p {
+      font-size: 0.85rem;
+      color: #166534;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            background-color: #f8fafb;
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text-dark);
-            font-size: 15px;
-            transition: 0.2s;
-        }
+    .short-url {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary-blue);
+      word-break: break-all;
+      margin-bottom: 15px;
+      display: block;
+      text-decoration: none;
+    }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--tsm-teal);
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(15, 91, 114, 0.15);
-        }
+    .short-url:hover {
+      text-decoration: underline;
+    }
 
-        .slug-wrapper {
-            display: flex;
-            align-items: center;
-            background-color: #f8fafb;
-            border: 1.5px solid var(--border-color);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+    .btn-copy {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
 
-        .slug-prefix {
-            padding: 12px 14px;
-            background-color: var(--tsm-teal-light);
-            color: var(--tsm-teal);
-            font-size: 13px;
-            font-weight: 700;
-            border-right: 1.5px solid var(--border-color);
-            white-space: nowrap;
-            max-width: 220px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .btn-copy:hover {
+      background: #084361;
+    }
 
-        .slug-wrapper input {
-            border: none;
-            border-radius: 0;
-            background: transparent;
-            flex: 1;
-        }
+    /* Loader */
+    .loader {
+      display: none;
+      margin: 15px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary-green);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+    }
 
-        button.btn-primary {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--tsm-green);
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(105, 175, 55, 0.25);
-        }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-        button.btn-primary:hover {
-            background-color: var(--tsm-green-dark);
-        }
+    .error-msg {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
 
-        button.btn-primary:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
+    footer {
+      margin-top: 25px;
+      font-size: 0.75rem;
+      color: #888;
+    }
 
-        /* TOOLBAR DA LISTA */
-        .list-toolbar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .list-toolbar input {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px 14px;
-            font-size: 14px;
-        }
-
-        .btn-toolbar {
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border-color);
-            background: white;
-            color: var(--tsm-teal);
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-toolbar:hover {
-            background: var(--tsm-teal-light);
-            border-color: var(--tsm-teal);
-        }
-
-        /* LISTA DE LINKS */
-        .links-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .link-item {
-            background: #f8fafb;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            transition: 0.2s;
-        }
-
-        .link-item:hover {
-            border-color: var(--tsm-teal);
-            box-shadow: 0 2px 8px rgba(15, 91, 114, 0.05);
-        }
-
-        .link-info {
-            flex: 1;
-            min-width: 220px;
-            word-break: break-all;
-        }
-
-        .short-url {
-            color: var(--tsm-teal);
-            font-weight: 800;
-            font-size: 16px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .short-url:hover {
-            text-decoration: underline;
-            color: var(--tsm-teal-dark);
-        }
-
-        .original-url {
-            color: var(--text-muted);
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .link-stats {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge-clicks {
-            background-color: var(--tsm-green-light);
-            color: var(--tsm-green-dark);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid rgba(105, 175, 55, 0.3);
-            white-space: nowrap;
-        }
-
-        .actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-action {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: #ffffff;
-            color: var(--tsm-teal);
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-action:hover {
-            background: var(--tsm-teal-light);
-            border-color: var(--tsm-teal);
-        }
-
-        .btn-test {
-            background: var(--tsm-teal);
-            color: #ffffff;
-            border-color: var(--tsm-teal);
-        }
-
-        .btn-test:hover {
-            background: var(--tsm-teal-dark);
-            color: #ffffff;
-        }
-
-        .btn-delete {
-            color: var(--danger);
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-delete:hover {
-            background: var(--danger-light);
-            border-color: var(--danger);
-        }
-
-        /* TOAST NOTIFICAÇÃO */
-        #toast-container {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toast {
-            background: var(--text-dark);
-            color: white;
-            padding: 14px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-            max-width: 350px;
-        }
-
-        .toast.success { background: #065f46; border-left: 5px solid var(--success-toast); }
-        .toast.error { background: #991b1b; border-left: 5px solid var(--danger); }
-        .toast.warning { background: #78350f; border-left: 5px solid #f59e0b; }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            to { opacity: 0; transform: translateY(10px); }
-        }
-
-        /* MODAL QR CODE */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 91, 114, 0.4);
-            backdrop-filter: blur(4px);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-            max-width: 320px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            transform: scale(0.95);
-            transition: transform 0.2s ease;
-        }
-
-        .modal.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-content img {
-            width: 200px;
-            height: 200px;
-            margin: 15px 0;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            background: white;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 30px;
-            font-size: 14px;
-        }
-
-        @media (max-width: 600px) {
-            .link-item { flex-direction: column; align-items: flex-start; }
-            .link-stats { width: 100%; justify-content: space-between; margin-top: 8px; }
-            .actions { flex: 1; justify-content: flex-end; }
-        }
-    </style>
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
+  <div class="container">
+    <!-- Logo do Anexo -->
+    <div class="logo-container">
+      <img src="1000369098.png" alt="TSM - Tecnologia, Sustentabilidade e Gestão" id="logo">
+    </div>
 
-    <!-- HEADER COM LOGO OFICIAL TSM -->
-    <header>
-        <div class="logo-box">
-            <svg class="tsm-logo-svg" viewBox="0 0 500 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo TSM Tecnologia, Sustentabilidade e Gestão">
-                <path d="M250 10 L370 100 V185 C370 198 360 205 347 205 H260 C252 205 245 198 245 190 C245 182 252 175 260 175 H345 V105 L250 35 L155 105 V175 H190 C198 175 205 182 205 190 C205 198 198 205 190 205 H153 C140 205 130 198 130 185 V100 L250 10 Z" fill="#0F5B72"/>
-                <rect x="202" y="90" width="96" height="75" rx="6" stroke="#0F5B72" stroke-width="8" fill="none"/>
-                <line x1="188" y1="108" x2="202" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <line x1="188" y1="127" x2="202" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <line x1="188" y1="146" x2="202" y2="146" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <line x1="298" y1="108" x2="312" y2="108" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <line x1="298" y1="127" x2="312" y2="127" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <line x1="298" y1="146" x2="312" y2="146" stroke="#0F5B72" stroke-width="5" stroke-linecap="round"/>
-                <path d="M250 180 C250 125 230 105 200 70 C230 75 255 93 250 120 C265 98 295 75 325 60 C325 92 295 115 250 180 Z" fill="#69AF37"/>
-                <path d="M250 150 C241 133 223 124 205 120 C218 115 236 124 250 150 Z" fill="#69AF37"/>
-                <text x="130" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#0F5B72" letter-spacing="1">TS</text>
-                <text x="168" y="215" font-family="'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#69AF37" letter-spacing="1">M</text>
-                <text x="202" y="213" font-family="'Segoe UI', sans-serif" font-weight="700" font-size="10" fill="#0F5B72" letter-spacing="0.5">TECNOLOGIA, SUSTENTABILIDADE E GESTÃO</text>
-            </svg>
-        </div>
+    <h1>Encurtador de Links 🌱</h1>
+    <p class="subtitle">Diminua seus links de forma simples, rápida e ecológica!</p>
+
+    <div class="input-group">
+      <input type="url" id="longUrl" placeholder="Cole sua URL longa aqui (ex: https://...)" required />
+      <button class="btn-shorten" onclick="shortenLink()">Encurtar Agora ✨</button>
+    </div>
+
+    <div class="loader" id="loader"></div>
+    <div class="error-msg" id="errorMsg">Por favor, insira uma URL válida contendo http:// ou https://</div>
+
+    <!-- Área de resultado -->
+    <div class="result-card" id="resultCard">
+      <p>🎉 Seu link encurtado está pronto!</p>
+      <a href="#" id="shortLink" target="_blank" class="short-url"></a>
+      <button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">📋 Copiar Link</button>
+    </div>
+
+    <footer>
+      TSM &copy; Tecnologia, Sustentabilidade e Gestão
+    </footer>
+  </div>
+
+  <script>
+    async function shortenLink() {
+      const longUrlInput = document.getElementById('longUrl');
+      const longUrl = longUrlInput.value.trim();
+      const loader = document.getElementById('loader');
+      const resultCard = document.getElementById('resultCard');
+      const errorMsg = document.getElementById('errorMsg');
+      const shortLinkAnchor = document.getElementById('shortLink');
+      const btnCopy = document.getElementById('btnCopy');
+
+      // Ocultar resultados anteriores
+      resultCard.style.display = 'none';
+      errorMsg.style.display = 'none';
+      btnCopy.innerText = '📋 Copiar Link';
+
+      // Validação simples de URL
+      if (!longUrl || (!longUrl.startsWith('http://') && !longUrl.startsWith('https://'))) {
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      loader.style.display = 'block';
+
+      try {
+        // Requisição para a API gratuita do TinyURL
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
         
-        <h1>Encurtador de Links Pro</h1>
-        <p>Gere links curtos de alta performance, rastreie acessos e crie QR Codes instantâneos</p>
-    </header>
-
-    <!-- PAINEL DE MÉTRICAS -->
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <div class="metric-icon" aria-hidden="true">🔗</div>
-            <div class="metric-info">
-                <h3>Total de Links</h3>
-                <p id="stat-total-links">0</p>
-            </div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-icon" aria-hidden="true">📊</div>
-            <div class="metric-info">
-                <h3>Cliques Totais</h3>
-                <p id="stat-total-clicks">0</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- FORMULÁRIO DE ENCURTAMENTO -->
-    <div class="card">
-        <h2>🔗 Gerar Link Curto</h2>
-        <form id="shortener-form" onsubmit="criarLink(event)">
-            <div class="form-group">
-                <label for="original-url">URL de Destino (Link Longo Original)</label>
-                <input type="text" id="original-url" placeholder="Ex: google.com ou https://meusite.com/pagina" required autocomplete="url">
-            </div>
-
-            <div class="form-group">
-                <label for="modo-encurtador">Tipo de Encurtador</label>
-                <select id="modo-encurtador" onchange="alternarModo()">
-                    <option value="api">⚡ Encurtador Web Global (TinyURL)</option>
-                    <option value="tsm">🏷️ Link com Apelido Local (Modo Interno)</option>
-                </select>
-            </div>
-
-            <div class="form-group" id="slug-group">
-                <label for="custom-slug">Apelido Customizado (Opcional)</label>
-                <div class="slug-wrapper">
-                    <span class="slug-prefix" id="domain-prefix">tinyurl.com/</span>
-                    <input type="text" id="custom-slug" placeholder="ex: relatorio-2026" pattern="[a-zA-Z0-9-_]+" title="Apenas letras, números e hífens" autocomplete="off">
-                </div>
-            </div>
-
-            <button type="submit" id="btn-submit" class="btn-primary">Encurtar Link Agora</button>
-        </form>
-    </div>
-
-    <!-- LISTA DE LINKS COM BUSCA E FERRAMENTAS -->
-    <div class="card">
-        <h2>
-            <span>📋 Meus Links Encurtados</span>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn-toolbar" onclick="exportarBackup()" title="Baixar Backup em JSON" aria-label="Exportar backup">
-                    💾 Exportar
-                </button>
-                <button class="btn-toolbar" onclick="document.getElementById('import-file').click()" title="Restaurar de arquivo JSON" aria-label="Importar backup">
-                    📂 Importar
-                </button>
-                <input type="file" id="import-file" style="display:none" accept=".json" onchange="importarBackup(event)">
-            </div>
-        </h2>
-
-        <div class="list-toolbar">
-            <input type="text" id="search-input" placeholder="🔍 Filtrar links por URL ou apelido..." oninput="renderLinks()" aria-label="Filtrar links">
-        </div>
-
-        <div id="links-container" class="links-list">
-            <!-- Renderizado via JS -->
-        </div>
-    </div>
-
-</div>
-
-<!-- TOAST CONTAINER -->
-<div id="toast-container" aria-live="polite"></div>
-
-<!-- MODAL QR CODE -->
-<div id="qr-modal" class="modal" onclick="fecharModal(event)" role="dialog" aria-modal="true" aria-labelledby="qr-title">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h3 id="qr-title" style="color: var(--tsm-teal); margin-bottom: 10px;">QR Code do Link</h3>
-        <img id="qr-image" src="" alt="QR Code gerado para o link">
-        <button class="btn-action" onclick="fecharModal()" style="width: 100%; background: var(--tsm-teal); color: white; padding: 10px; justify-content: center;">Fechar (ESC)</button>
-    </div>
-</div>
-
-<script>
-    // ==========================================
-    // ESTADO E INICIALIZAÇÃO
-    // ==========================================
-    let linksDB = [];
-    
-    // Função de sanitização para prevenir XSS
-    function escapeHTML(str) {
-        if (typeof str !== 'string') return str;
-        return str.replace(/[&<>"']/g, function(match) {
-            const escapeMap = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            };
-            return escapeMap[match];
-        });
-    }
-
-    function carregarDados() {
-        try {
-            const dados = localStorage.getItem('tsm_links_v6');
-            linksDB = dados ? JSON.parse(dados) : [];
-        } catch (e) {
-            console.error("Erro ao carregar dados do localStorage:", e);
-            linksDB = [];
+        if (!response.ok) {
+          throw new Error('Falha ao encurtar a URL');
         }
+
+        const shortUrl = await response.text();
+
+        // Atualiza a interface
+        shortLinkAnchor.href = shortUrl;
+        shortLinkAnchor.innerText = shortUrl;
+        resultCard.style.display = 'block';
+      } catch (err) {
+        errorMsg.innerText = 'Ocorreu um erro ao encurtar o link. Tente novamente.';
+        errorMsg.style.display = 'block';
+      } finally {
+        loader.style.display = 'none';
+      }
     }
 
-    function salvarDados() {
-        try {
-            localStorage.setItem('tsm_links_v6', JSON.stringify(linksDB));
-        } catch (e) {
-            mostrarToast("Erro: Armazenamento local cheio ou indisponível.", "error");
-        }
-    }
+    function copyToClipboard() {
+      const shortUrl = document.getElementById('shortLink').innerText;
+      const btnCopy = document.getElementById('btnCopy');
 
-    window.addEventListener('DOMContentLoaded', () => {
-        carregarDados();
-        verificarRedirecionamentoHash();
-        alternarModo();
-        atualizarMetricas();
-        renderLinks();
-        
-        // Suporte a tecla ESC para fechar modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') fecharModal();
-        });
-    });
-
-    // ==========================================
-    // FUNÇÕES DE UI E UTILITÁRIOS
-    // ==========================================
-    function mostrarToast(mensagem, tipo = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast ${tipo}`;
-        const icon = tipo === 'success' ? '✅' : (tipo === 'error' ? '⚠️' : 'ℹ️');
-        toast.innerHTML = `<span aria-hidden="true">${icon}</span> <span>${escapeHTML(mensagem)}</span>`;
-        container.appendChild(toast);
+      navigator.clipboard.writeText(shortUrl).then(() => {
+        btnCopy.innerText = '✅ Copiado!';
         setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
+          btnCopy.innerText = '📋 Copiar Link';
         }, 3000);
+      }).catch(err => {
+        alert('Erro ao copiar o link.');
+      });
     }
-
-    function atualizarMetricas() {
-        const totalLinks = linksDB.length;
-        const totalCliques = linksDB.reduce((acc, item) => acc + (item.clicks || 0), 0);
-        document.getElementById('stat-total-links').innerText = totalLinks;
-        document.getElementById('stat-total-clicks').innerText = totalCliques;
-    }
-
-    function formatarURL(url) {
-        url = url.trim();
-        if (!/^https?:\/\//i.test(url)) {
-            url = 'https://' + url;
-        }
-        try {
-            // Valida e normaliza a URL
-            return new URL(url).toString();
-        } catch (e) {
-            throw new Error("A URL fornecida é inválida.");
-        }
-    }
-
-    function alternarModo() {
-        const modo = document.getElementById('modo-encurtador').value;
-        const prefix = document.getElementById('domain-prefix');
-        if (modo === 'api') {
-            prefix.innerText = 'tinyurl.com/';
-        } else {
-            const paginaAtual = window.location.pathname.split('/').pop() || 'index.html';
-            prefix.innerText = `${paginaAtual}#`;
-        }
-    }
-
-    // ==========================================
-    // LÓGICA DE REDIRECIONAMENTO
-    // ==========================================
-    function verificarRedirecionamentoHash() {
-        const hash = window.location.hash;
-        if (hash) {
-            const slugBuscado = hash.substring(1).toLowerCase(); // Remove o '#'
-            const linkEncontrado = linksDB.find(l => l.slug === slugBuscado && l.modo === 'tsm');
-            
-            if (linkEncontrado) {
-                linkEncontrado.clicks = (linkEncontrado.clicks || 0) + 1;
-                salvarDados();
-                atualizarMetricas();
-                // Redirecionamento seguro
-                window.location.replace(linkEncontrado.originalUrl);
-            }
-        }
-    }
-
-    // ==========================================
-    // CRIAÇÃO DE LINK
-    // ==========================================
-    async function criarLink(event) {
-        event.preventDefault();
-
-        const btnSubmit = document.getElementById('btn-submit');
-        const originalUrlInput = document.getElementById('original-url');
-        const customSlugInput = document.getElementById('custom-slug');
-        const modo = document.getElementById('modo-encurtador').value;
-
-        let originalUrl;
-        try {
-            originalUrl = formatarURL(originalUrlInput.value);
-        } catch (e) {
-            mostrarToast(e.message, "error");
-            return;
-        }
-
-        const customSlug = customSlugInput.value.trim().toLowerCase();
-        
-        // Validação de slug duplicado no modo local
-        if (modo === 'tsm' && customSlug && linksDB.some(l => l.slug === customSlug)) {
-            mostrarToast("Este apelido já está em uso. Escolha outro.", "error");
-            return;
-        }
-
-        btnSubmit.disabled = true;
-        btnSubmit.innerText = "Processando...";
-
-        let shortUrlFinal = "";
-        let modoFinal = modo;
-
-        if (modo === 'api') {
-            try {
-                // Tenta API direta primeiro (mais rápido se o CORS permitir)
-                let targetApi = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(originalUrl)}`;
-                
-                // Nota: A API pública do TinyURL não suporta alias customizados oficialmente.
-                // Se o usuário pedir alias no modo API, forçamos o fallback local para garantir o alias.
-                if (customSlug) {
-                    throw new Error("Alias customizado solicitado, usando modo local.");
-                }
-
-                const response = await fetch(targetApi);
-                if (response.ok) {
-                    const resultText = (await response.text()).trim();
-                    if (resultText.startsWith('http')) {
-                        shortUrlFinal = resultText;
-                    } else {
-                        throw new Error("Resposta inválida da API");
-                    }
-                } else {
-                    throw new Error("Falha na API");
-                }
-            } catch (err) {
-                console.warn("Fallback para modo local ativado:", err.message);
-                modoFinal = 'tsm';
-                const base = window.location.href.split('#')[0];
-                const slugUsado = customSlug || Math.random().toString(36).substring(2, 7);
-                shortUrlFinal = `${base}#${slugUsado}`;
-                mostrarToast("Salvo no modo local (limitação de rede/API).", "warning");
-            }
-        } else {
-            const base = window.location.href.split('#')[0];
-            const slugUsado = customSlug || Math.random().toString(36).substring(2, 7);
-            shortUrlFinal = `${base}#${slugUsado}`;
-        }
-
-        const novoItem = {
-            id: Date.now(),
-            shortUrl: shortUrlFinal,
-            originalUrl: originalUrl,
-            slug: customSlug || shortUrlFinal.split('#').pop() || 'link',
-            modo: modoFinal,
-            clicks: 0,
-            date: new Date().toLocaleDateString('pt-BR')
-        };
-
-        linksDB.unshift(novoItem);
-        salvarDados();
-
-        document.getElementById('shortener-form').reset();
-        btnSubmit.disabled = false;
-        btnSubmit.innerText = "Encurtar Link Agora";
-        alternarModo();
-        atualizarMetricas();
-        renderLinks();
-
-        mostrarToast("Link criado com sucesso!");
-    }
-
-    // ==========================================
-    // RENDERIZAÇÃO E AÇÕES
-    // ==========================================
-    function renderLinks() {
-        const container = document.getElementById('links-container');
-        const termoBusca = document.getElementById('search-input').value.toLowerCase();
-
-        const linksFiltrados = linksDB.filter(item => 
-            item.shortUrl.toLowerCase().includes(termoBusca) || 
-            item.originalUrl.toLowerCase().includes(termoBusca) ||
-            (item.slug && item.slug.toLowerCase().includes(termoBusca))
-        );
-
-        if (linksFiltrados.length === 0) {
-            container.innerHTML = `<div class="empty-state">Nenhum link encontrado. Crie um novo acima!</div>`;
-            return;
-        }
-
-        container.innerHTML = linksFiltrados.map(item => {
-            // Uso rigoroso de escapeHTML para prevenir XSS
-            const safeShortUrl = escapeHTML(item.shortUrl);
-            const safeOriginalUrl = escapeHTML(item.originalUrl);
-            const clicks = item.clicks || 0;
-
-            return `
-                <div class="link-item">
-                    <div class="link-info">
-                        <a href="${safeShortUrl}" target="_blank" rel="noopener noreferrer" class="short-url" onclick="registrarClique(${item.id})">
-                            🔗 ${safeShortUrl}
-                        </a>
-                        <div class="original-url" title="${safeOriginalUrl}">Destino: ${safeOriginalUrl}</div>
-                    </div>
-
-                    <div class="link-stats">
-                        <span class="badge-clicks" aria-label="${clicks} acessos">📊 ${clicks} ${clicks === 1 ? 'acesso' : 'acessos'}</span>
-                        <div class="actions">
-                            <button class="btn-action btn-test" onclick="testarEContabilizar(${item.id})" title="Testar Link" aria-label="Abrir link">🚀</button>
-                            <button class="btn-action" onclick="copiarTexto('${safeShortUrl}')" title="Copiar Link" aria-label="Copiar link">📋</button>
-                            <button class="btn-action" onclick="gerarQRCode('${safeShortUrl}')" title="Gerar QR Code" aria-label="Gerar QR Code">📱</button>
-                            <button class="btn-action btn-delete" onclick="deletarLink(${item.id})" title="Excluir" aria-label="Excluir link">🗑️</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function testarEContabilizar(id) {
-        const item = linksDB.find(l => l.id === id);
-        if (item) {
-            item.clicks = (item.clicks || 0) + 1;
-            salvarDados();
-            atualizarMetricas();
-            renderLinks();
-            window.open(item.shortUrl, '_blank', 'noopener,noreferrer');
-        }
-    }
-
-    function registrarClique(id) {
-        const item = linksDB.find(l => l.id === id);
-        if (item) {
-            item.clicks = (item.clicks || 0) + 1;
-            salvarDados();
-            atualizarMetricas();
-            renderLinks();
-        }
-    }
-
-    function copiarTexto(texto) {
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(texto).then(() => {
-                mostrarToast("Link copiado para a área de transferência!");
-            }).catch(() => fallbackCopiar(texto));
-        } else {
-            fallbackCopiar(texto);
-        }
-    }
-
-    function fallbackCopiar(texto) {
-        const input = document.createElement('textarea');
-        input.value = texto;
-        input.style.position = 'fixed';
-        input.style.opacity = '0';
-        document.body.appendChild(input);
-        input.select();
-        try {
-            document.execCommand('copy');
-            mostrarToast("Link copiado para a área de transferência!");
-        } catch (err) {
-            mostrarToast("Falha ao copiar. Tente manualmente.", "error");
-        }
-        document.body.removeChild(input);
-    }
-
-    function gerarQRCode(url) {
-        // Usa API pública confiável para QR Code
-        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=10&data=${encodeURIComponent(url)}`;
-        document.getElementById('qr-image').src = qrUrl;
-        const modal = document.getElementById('qr-modal');
-        modal.classList.add('active');
-    }
-
-    function fecharModal(event) {
-        // Fecha se clicar no fundo ou se event for undefined (tecla ESC)
-        if (!event || event.target.id === 'qr-modal') {
-            document.getElementById('qr-modal').classList.remove('active');
-        }
-    }
-
-    function deletarLink(id) {
-        if (confirm('Deseja realmente excluir este link permanentemente?')) {
-            linksDB = linksDB.filter(l => l.id !== id);
-            salvarDados();
-            atualizarMetricas();
-            renderLinks();
-            mostrarToast("Link excluído com sucesso.", "error");
-        }
-    }
-
-    // ==========================================
-    // BACKUP E RESTAURAÇÃO
-    // ==========================================
-    function exportarBackup() {
-        if (linksDB.length === 0) {
-            mostrarToast("Nenhum link para exportar.", "warning");
-            return;
-        }
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(linksDB, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", `tsm_links_backup_${new Date().toISOString().slice(0,10)}.json`);
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-        mostrarToast("Backup exportado com sucesso!");
-    }
-
-    function importarBackup(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (Array.isArray(importedData) && importedData.every(item => item.originalUrl && item.shortUrl)) {
-                    // Mescla com dados existentes, evitando duplicatas exatas de ID
-                    const idsExistentes = new Set(linksDB.map(l => l.id));
-                    const novosLinks = importedData.filter(l => !idsExistentes.has(l.id));
-                    
-                    linksDB = [...novosLinks, ...linksDB];
-                    salvarDados();
-                    atualizarMetricas();
-                    renderLinks();
-                    mostrarToast(`${novosLinks.length} links importados com sucesso!`);
-                } else {
-                    throw new Error("Formato de arquivo inválido");
-                }
-            } catch(err) {
-                mostrarToast("Erro ao importar: Arquivo JSON corrompido ou inválido.", "error");
-            }
-            // Limpa o input para permitir importar o mesmo arquivo novamente se necessário
-            event.target.value = '';
-        };
-        reader.readAsText(file);
-    }
-</script>
+  </script>
 
 </body>
 </html>
